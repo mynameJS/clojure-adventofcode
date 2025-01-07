@@ -69,3 +69,42 @@ lmdrbhrpvwfloiuktanxzjsqeb
 ;; result
 
 (def chek-sum-boxs (check-sum box-ids)) ; 5000
+
+
+
+;; 3. 겹치는 원단 넓이
+
+
+
+(def input-text "#1 @ 257,829: 10x23
+#2 @ 902,685: 10x20
+#3 @ 107,733: 20x25
+#4 @ 186,421: 20x11
+#5 @ 360,229: 29x10
+#6 @ 362,248: 24x10
+#7 @ 922,250: 13x26
+#8 @ 256,742: 18x14
+")
+
+(def claims-data (convert-to-vector input-text))
+
+
+(defn count-overlap-square-inches
+  "겹치는 원단의 인치를 계산하는 함수"
+  [claims size]
+  (let [fabric (atom (vec (repeat size (vec (repeat size 0)))))]  
+    (doseq [claim claims] 
+      (let [[_ x y w h] (re-matches #"#\d+ @ (\d+),(\d+): (\d+)x(\d+)" claim)
+            x (Integer. x)  
+            y (Integer. y) 
+            w (Integer. w)  
+            h (Integer. h)] 
+        (doseq [i (range x (+ x w))] 
+          (doseq [j (range y (+ y h))]  
+            (swap! fabric assoc-in [i j] (inc (get-in @fabric [i j] 0))))))) 
+    (count (filter #(>= % 2) (apply concat @fabric)))))  
+
+
+
+
+
